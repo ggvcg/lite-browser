@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>搜索</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* 全屏相关样式 */
+        .bilibili-player-video-web-fullscreen {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 999999 !important;
+        }
+        .bilibili-player-video-control-wrap {
+            z-index: 1000000 !important;
+        }
+
+        .search-container {
+            position: relative;
+            margin-top: 60px;
+            text-align: center;
+            width: 100%;
+            max-width: 800px;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+        .logo {
+            margin-bottom: 20px;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+        }
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .search-wrapper {
+            position: relative;
+            width: 582px;
+            max-width: 90vw;
+            margin: 0 auto;
+        }
+        .search-box {
+            width: 100%;
+            padding: 14px 50px;
+            font-size: 16px;
+            border: 1px solid #dfe1e5;
+            border-radius: 24px;
+            outline: none;
+            box-sizing: border-box;
+            background-color: #fff;
+        }
+        .search-box:hover, .search-box:focus {
+            box-shadow: 0 1px 6px rgba(32,33,36,.28);
+            border-color: transparent;
+        }
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9aa0a6;
+        }
+        .voice-icon, .camera-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4285f4;
+            cursor: pointer;
+        }
+        .camera-icon {
+            right: 55px;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        .search-button {
+            background-color: #f8f9fa;
+            border: 1px solid #f8f9fa;
+            border-radius: 4px;
+            color: #3c4043;
+            font-size: 14px;
+            margin: 11px 4px;
+            padding: 0 16px;
+            height: 36px;
+            cursor: pointer;
+        }
+        .search-button:hover {
+            box-shadow: 0 1px 1px rgba(0,0,0,.1);
+            border: 1px solid #dadce0;
+        }
+        .language-options {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #222;
+        }
+        .language-options a {
+            color: #1a0dab;
+            text-decoration: none;
+            padding: 0 3px;
+        }
+        .language-options a:hover {
+            text-decoration: underline;
+        }
+
+        /* 搜索引擎切换相关样式 */
+        .search-engine-selector {
+            position: absolute;
+            left: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-engine-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            object-fit: contain;
+        }
+
+        .search-engine-menu {
+            position: absolute;
+            left: -100px;
+            top: 100%;
+            background: white;
+            border: 1px solid #dfe1e5;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            padding: 8px 0;
+            display: none;
+            z-index: 1000;
+            width: 200px;
+        }
+
+        .search-engine-menu.show {
+            display: block;
+        }
+
+        .search-engine-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        .search-engine-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .search-engine-item img {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+        }
+
+        .search-engine-item.active {
+            background-color: #e8f0fe;
+            color: #1a73e8;
+        }
+    </style>
+</head>
+<body>
+    <!-- 搜索容器 -->
+    <div class="search-container">
+        <div class="logo">
+            <img src="https://www.google.com/favicon.ico" alt="Logo" id="search-logo" style="width: 100px; height: 100px;">
+        </div>
+        <div class="search-wrapper">
+            <div class="search-engine-selector" id="searchEngineSelector">
+                <img src="https://www.google.com/favicon.ico" alt="Google" class="search-engine-icon" id="currentEngineIcon">
+                <div class="search-engine-menu" id="searchEngineMenu">
+                    <div class="search-engine-item active" data-engine="google">
+                        <img src="https://www.google.com/favicon.ico" alt="Google">
+                        <span>Google</span>
+                    </div>
+                    <div class="search-engine-item" data-engine="bing">
+                        <img src="https://www.bing.com/sa/simg/favicon-2x.ico" alt="Bing">
+                        <span>Bing</span>
+                    </div>
+                    <div class="search-engine-item" data-engine="baidu">
+                        <img src="https://www.baidu.com/favicon.ico" alt="百度">
+                        <span>百度</span>
+                    </div>
+                </div>
+            </div>
+            <span class="material-icons search-icon">search</span>
+            <form id="search-form">
+                <input type="text" class="search-box" id="search-input" placeholder="请输入搜索内容...">
+                <span class="material-icons camera-icon">camera_alt</span>
+                <span class="material-icons voice-icon">mic</span>
+            </form>
+        </div>
+        <div class="buttons">
+            <button type="submit" class="search-button" form="search-form">搜索</button>
+            <button class="search-button" id="luckyButton">手气不错</button>
+        </div>
+        <div class="language-options">
+            界面语言：
+            <a href="#" onclick="changeLanguage('zh')">简体中文</a>
+            <a href="#" onclick="changeLanguage('en')">English</a>
+        </div>
+    </div>
+
+    <script>
+        // 语言切换功能
+        const languageStrings = {
+            'zh': {
+                searchButton: 'Google 搜索',
+                luckyButton: '手气不错',
+                languageText: 'Google 界面语言：',
+                searchPlaceholder: '请输入搜索内容...'
+            },
+            'en': {
+                searchButton: 'Google Search',
+                luckyButton: "I'm Feeling Lucky",
+                languageText: 'Google offered in:',
+                searchPlaceholder: 'Search Google or type a URL'
+            }
+        };
+
+        let currentLanguage = 'zh';
+
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            document.querySelectorAll('.search-button')[0].textContent = languageStrings[lang].searchButton;
+            document.querySelectorAll('.search-button')[1].textContent = languageStrings[lang].luckyButton;
+            const langTextElem = document.querySelector('.language-options');
+            langTextElem.innerHTML = `${languageStrings[lang].languageText} <a href="#" onclick="changeLanguage('zh')">简体中文</a> <a href="#" onclick="changeLanguage('en')">English</a>`;
+            document.getElementById('search-input').placeholder = languageStrings[lang].searchPlaceholder;
+        }
+
+        // 搜索引擎配置
+        let currentEngine = localStorage.getItem('searchEngine') || 'google';
+        const searchEngines = {
+            google: {
+                url: 'https://www.google.com/search',
+                param: 'q',
+                name: 'Google',
+                icon: 'https://www.google.com/favicon.ico',
+                logo: 'https://www.google.com/favicon.ico'
+            },
+            bing: {
+                url: 'https://www.bing.com/search',
+                param: 'q',
+                name: 'Bing',
+                icon: 'https://www.bing.com/sa/simg/favicon-2x.ico',
+                logo: 'https://www.bing.com/sa/simg/favicon-2x.ico'
+            },
+            baidu: {
+                url: 'https://www.baidu.com/s',
+                param: 'wd',
+                name: '百度',
+                icon: 'https://www.baidu.com/favicon.ico',
+                logo: 'https://www.baidu.com/favicon.ico'
+            }
+        };
+
+        // 初始化搜索引擎
+        function initSearchEngine() {
+            const engine = searchEngines[currentEngine];
+            document.getElementById('currentEngineIcon').src = engine.icon;
+            document.getElementById('search-logo').src = engine.logo;
+            document.querySelectorAll('.search-button')[0].textContent = `${engine.name} 搜索`;
+            document.querySelectorAll('.search-engine-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.engine === currentEngine);
+            });
+        }
+
+        // 切换搜索引擎
+        function changeSearchEngine(engine) {
+            currentEngine = engine;
+            localStorage.setItem('searchEngine', engine);
+            initSearchEngine();
+        }
+
+        // 搜索引擎选择器点击事件
+        document.getElementById('searchEngineSelector').addEventListener('click', (e) => {
+            document.getElementById('searchEngineMenu').classList.toggle('show');
+            e.stopPropagation();
+        });
+
+        // 点击其他地方关闭菜单
+        document.addEventListener('click', () => {
+            document.getElementById('searchEngineMenu').classList.remove('show');
+        });
+
+        // 搜索引擎选择
+        document.querySelectorAll('.search-engine-item').forEach(item => {
+            item.addEventListener('click', () => {
+                changeSearchEngine(item.dataset.engine);
+            });
+        });
+
+        // 搜索功能
+        document.getElementById('search-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = document.getElementById('search-input').value;
+            if (query.trim()) {
+                const engine = searchEngines[currentEngine];
+                window.location.href = `${engine.url}?${engine.param}=${encodeURIComponent(query)}`;
+            }
+        });
+
+        // 随机搜索功能
+        document.getElementById('luckyButton').addEventListener('click', function() {
+            const randomQueries = ['猫咪', '狗狗', '熊猫', '美食', '旅游', '音乐'];
+            const randomQuery = randomQueries[Math.floor(Math.random() * randomQueries.length)];
+            const engine = searchEngines[currentEngine];
+            window.location.href = `${engine.url}?${engine.param}=${encodeURIComponent(randomQuery)}`;
+        });
+
+        // 初始化
+        initSearchEngine();
+    </script>
+</body>
+</html>

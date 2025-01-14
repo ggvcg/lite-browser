@@ -1,0 +1,44 @@
+{
+  "name": "search-app",
+  "version": "1.0.0",
+  "description": "轻量级浏览器",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder build --win",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.search.app",
+    "productName": "轻量级浏览器",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "轻量级浏览器",
+      "language": "2052"
+    }
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0",
+    "png-to-ico": "^2.1.8"
+  }
+}

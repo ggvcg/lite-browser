@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>标签页</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .browser-container {
+            display: flex;
+            flex-direction: column;
+            height: 80px;
+            width: 100%;
+        }
+
+        /* 标签栏 */
+        .tab-container {
+            display: flex;
+            align-items: center;
+            height: 40px;
+            background-color: #f1f3f4;
+            padding: 0 8px;
+            box-sizing: border-box;
+            border-bottom: 1px solid #dfe1e5;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding-right: 8px;
+            border-right: 1px solid #dfe1e5;
+            margin-right: 8px;
+        }
+
+        .nav-button {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            color: #5f6368;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        .tabs-wrapper {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            overflow: hidden;
+            margin-right: 8px;
+        }
+
+        .tabs {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            min-width: 120px;
+            max-width: 200px;
+            height: 32px;
+            margin-right: 4px;
+            padding: 0 8px;
+            background: white;
+            border-radius: 8px;
+            cursor: default;
+            transition: background-color 0.2s;
+        }
+
+        .tab.active {
+            background: #e8f0fe;
+        }
+
+        .tab:hover:not(.active) {
+            background: #f8f9fa;
+        }
+
+        .tab-title {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 13px;
+            color: #202124;
+        }
+
+        .tab-close {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-left: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s, background-color 0.2s;
+        }
+
+        .tab:hover .tab-close {
+            opacity: 1;
+        }
+
+        .tab-close:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .new-tab-button {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            color: #5f6368;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .new-tab-button:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        /* 地址栏 */
+        .url-bar-container {
+            display: flex;
+            align-items: center;
+            height: 40px;
+            background-color: #f1f3f4;
+            padding: 0 16px;
+            box-sizing: border-box;
+            border-bottom: 1px solid #dfe1e5;
+        }
+
+        .url-input-wrapper {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            height: 32px;
+            background-color: white;
+            border-radius: 20px;
+            padding: 0 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: box-shadow 0.2s;
+        }
+
+        .url-input-wrapper:hover {
+            box-shadow: 0 1px 6px rgba(32,33,36,0.28);
+        }
+
+        .url-input-wrapper:focus-within {
+            box-shadow: 0 1px 8px rgba(32,33,36,0.35);
+        }
+
+        .url-bar {
+            flex: 1;
+            height: 100%;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            background: transparent;
+            color: #202124;
+            margin: 0 8px;
+        }
+
+        .url-refresh {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            color: #5f6368;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .url-refresh:hover {
+            background: rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="browser-container">
+        <!-- 标签栏 -->
+        <div class="tab-container">
+            <div class="navigation-buttons">
+                <button class="nav-button back-button" disabled title="后退">
+                    <span class="material-icons">arrow_back</span>
+                </button>
+                <button class="nav-button forward-button" disabled title="前进">
+                    <span class="material-icons">arrow_forward</span>
+                </button>
+            </div>
+            
+            <div class="tabs-wrapper">
+                <div class="tabs">
+                    <!-- 标签页将在这里动态添加 -->
+                </div>
+                <button class="new-tab-button" title="新建标签页">
+                    <span class="material-icons">add</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 地址栏 -->
+        <div class="url-bar-container">
+            <div class="url-input-wrapper">
+                <input type="text" class="url-bar" placeholder="输入网址或搜索内容">
+                <button class="url-refresh" title="刷新">
+                    <span class="material-icons">refresh</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+        let activeTabIndex = 0;
+
+        // 创建新标签页
+        function createTab(title = '搜索', index = document.querySelectorAll('.tab').length) {
+            const tab = document.createElement('div');
+            tab.className = 'tab';
+            tab.dataset.index = index;
+            tab.innerHTML = `
+                <span class="tab-title">${title}</span>
+                <span class="tab-close">×</span>
+            `;
+
+            tab.addEventListener('click', () => setActiveTab(index));
+            tab.querySelector('.tab-close').addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeTab(index);
+            });
+
+            const tabs = document.querySelector('.tabs');
+            tabs.appendChild(tab);
+            setActiveTab(index);
+        }
+
+        // 设置活动标签页
+        function setActiveTab(index) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (parseInt(tab.dataset.index) === index) {
+                    tab.classList.add('active');
+                }
+            });
+            activeTabIndex = index;
+            ipcRenderer.send('switch-tab', index);
+        }
+
+        // 关闭标签页
+        function closeTab(index) {
+            const tabs = document.querySelectorAll('.tab');
+            if (tabs.length <= 1) return;
+
+            ipcRenderer.send('close-tab', index);
+        }
+
+        // 监听标签页移除事件
+        ipcRenderer.on('tab-removed', (event, { index, newIndex }) => {
+            const tabs = document.querySelectorAll('.tab');
+            const tabToRemove = document.querySelector(`.tab[data-index="${index}"]`);
+            if (tabToRemove) {
+                tabToRemove.remove();
+                
+                // 更新剩余标签页的索引
+                tabs.forEach((tab, i) => {
+                    const currentIndex = parseInt(tab.dataset.index);
+                    if (currentIndex > index) {
+                        tab.dataset.index = currentIndex - 1;
+                    }
+                });
+
+                // 设置新的活动标签页
+                setActiveTab(newIndex);
+            }
+        });
+
+        // 监听新标签页按钮点击
+        document.querySelector('.new-tab-button').addEventListener('click', () => {
+            ipcRenderer.send('new-tab');
+        });
+
+        // 监听导航按钮点击
+        document.querySelector('.back-button').addEventListener('click', () => {
+            ipcRenderer.send('go-back', activeTabIndex);
+        });
+
+        document.querySelector('.forward-button').addEventListener('click', () => {
+            ipcRenderer.send('go-forward', activeTabIndex);
+        });
+
+        // 监听地址栏输入
+        document.querySelector('.url-bar').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const url = e.target.value.trim();
+                ipcRenderer.send('navigate-to-url', url);
+            }
+        });
+
+        // 监听刷新按钮点击
+        document.querySelector('.url-refresh').addEventListener('click', () => {
+            ipcRenderer.send('refresh-page', activeTabIndex);
+        });
+
+        // 监听标签页创建事件
+        ipcRenderer.on('tab-created', (event, { index, title }) => {
+            createTab(title, index);
+        });
+
+        // 监听标签页更新事件
+        ipcRenderer.on('update-tab', (event, { index, title }) => {
+            const tab = document.querySelector(`.tab[data-index="${index}"]`);
+            if (tab) {
+                tab.querySelector('.tab-title').textContent = title;
+            }
+        });
+
+        // 监听导航状态更新
+        ipcRenderer.on('update-nav-state', (event, state) => {
+            document.querySelector('.back-button').disabled = !state.canGoBack;
+            document.querySelector('.forward-button').disabled = !state.canGoForward;
+        });
+
+        // 监听 URL 更新
+        ipcRenderer.on('update-url', (event, url) => {
+            document.querySelector('.url-bar').value = url;
+        });
+    </script>
+</body>
+</html> 
